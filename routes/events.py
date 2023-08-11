@@ -1,7 +1,8 @@
 # 이벤트 처리용 모델을 정의
 
-from fastapi import APIRouter, Body, HTTPException, status
-from models.events import Event
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from database.connection import get_session
+from models.events import Event, EventUpdate
 from typing import List
 
 event_router=APIRouter(
@@ -29,8 +30,10 @@ async def retrieve_event(id:int) -> Event:
     
 # 이벤트 생성 라우트
 @event_router.post("/new")
-async def create_event(body:Event=Body(...)) -> dict:
-    events.append(body)
+async def create_event(new_event: Event, session=Depends(get_session)) -> dict:
+    session.add(new_event)       # 데이터(이벤트)를 세션에 추가
+    session.commit()             # 데이터베이스에 등록
+    session.refresh(new_event)   # 세션을 업데이트
     return{
         "message":"Event created successfully."
     }

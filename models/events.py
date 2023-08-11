@@ -8,7 +8,7 @@ class Event(SQLModel, table=True):
     title: str          # 이벤트 타이틀
     image: str          # 이벤트 이미지 배너의 링크
     description: str    # 이벤트 설명
-    tags: List[str] = Field(default=None, primary_key=True)           
+    tags: List[str] = Field(sa_column=Column(JSON))           
     location: str       # 이벤트 위치
 
     # Config 서브 클래스 : 문서화할 때 샘플 데이터를 보여주기 위한 용도
