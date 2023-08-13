@@ -25,7 +25,7 @@ async def retrieve_event(id:int) -> Event:
     event=await event_database.get_all()
     if not event:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist."
         )
     return event
@@ -44,7 +44,7 @@ async def update_event(id: PydanticObjectId, body:EventUpdate) -> Event:
     updated_event=await event_database.update(id, body)
     if not updated_event:
         raise HTTPException(
-            status_code=status.404
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist."
         )
     return updated_event
