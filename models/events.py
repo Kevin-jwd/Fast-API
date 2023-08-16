@@ -1,6 +1,7 @@
 # 이벤트 처리용 모델을 정의
 from beanie import Document
 from typing import Optional, List
+from pydantic import BaseModel
 
 # 이벤트 모델
 class Event(Document):
@@ -27,7 +28,7 @@ class Event(Document):
         name="events"
 
 # UPDATE 처리를 위한 pydantic 모델
-class EventUpdate(Document):
+class EventUpdate(BaseModel):
     title: Optional[str]          # 이벤트 타이틀
     image: Optional[str]          # 이벤트 이미지 배너의 링크
     description: Optional[str]    # 이벤트 설명

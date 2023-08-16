@@ -8,13 +8,20 @@ from pydantic import BaseSettings, BaseModel
 from models.users import User
 from models.events import Event
 
-async def initialize_database(self):      # 데이터베이스 초기화
-    client=AsyncIOMotorClient(self.DATABASE_URL)
-    await init_beanie(database=client.get_default_database(),document_models=[Event,User])
+# async def initialize_database(self):      # 데이터베이스 초기화
+#     client=AsyncIOMotorClient(self.DATABASE_URL)
+#     await init_beanie(database=client.get_default_database(),document_models=[Event,User])
 
-class Config:
-    env_file=".env"
+class Settings(BaseSettings):
+    DATABASE_URL:Optional[str]=None
 
+    async def initialize_database(self):
+        client=AsyncIOMotorClient(self.DATABASE_URL)
+        await init_beanie(database=client.get_default_database(), document_models=[Event,User])
+
+    class Config:
+        env_file=".env"
+        
 class Database:
     def __init__(self,model):
         self.model=model

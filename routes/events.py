@@ -17,12 +17,13 @@ events=[]
 @event_router.get("/", response_model=List[Event])
 async def retrieve_all_events() -> List[Event]:
     events=await event_database.get_all()
+    print("GET호출되었습니다.")
     return events
 
 # 특정 ID의 이벤트 추출하는 라우트
 @event_router.get("/{id}", response_model=Event)
-async def retrieve_event(id:int) -> Event:
-    event=await event_database.get_all()
+async def retrieve_event(id:PydanticObjectId) -> Event:
+    event=await event_database.get(id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -41,13 +42,16 @@ async def create_event(body:Event) -> dict:
 # UPDATE 라우트
 @event_router.put("/{id}", response_model=Event)
 async def update_event(id: PydanticObjectId, body:EventUpdate) -> Event:
+    print("PUT 호출되었습니다.")
     updated_event=await event_database.update(id, body)
     if not updated_event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist."
         )
+
     return updated_event
+
 
 # 데이터베이스에 있는 단일 이벤트 삭제
 @event_router.delete("/{id}")

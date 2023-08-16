@@ -14,7 +14,7 @@ user_database=Database(User)
 # 등록 라우트
 # 애플리케이션에 내장된 데이터베이스 사용
 @user_router.post("/signup")
-async def sign_new_user(data:User)->dict:
+async def sign_new_user(user:User)->dict:
     user_exist=await User.find_one(User.email == user.email)
     if user_exist:
         raise HTTPException(
