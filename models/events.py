@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 # 이벤트 모델
 class Event(Document):
+    creator: Optional[str]       # 해당 이벤트를 소유한 사용자만 처리할 수 있도록 Creator필드 생성
     title: str          # 이벤트 타이틀
     image: str          # 이벤트 이미지 배너의 링크
     description: str    # 이벤트 설명

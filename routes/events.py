@@ -18,7 +18,6 @@ events=[]
 @event_router.get("/", response_model=List[Event])
 async def retrieve_all_events() -> List[Event]:
     events=await event_database.get_all()
-    print("GET호출되었습니다.")
     return events
 
 # 특정 ID의 이벤트 추출하는 라우트
@@ -35,6 +34,7 @@ async def retrieve_event(id:PydanticObjectId) -> Event:
 # 이벤트 생성 라우트
 @event_router.post("/new")
 async def create_event(body:Event, user: str = Depends(authenticate)) -> dict:
+    body.creator=user
     await event_database.save(body)
     return{
         "message":"Event created successfully."
