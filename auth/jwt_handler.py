@@ -45,8 +45,10 @@ def verify_access_token(token:str):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Token expired!"
             )
+        # 유효하다면 디코딩된 페이로드 반환
         return data
     
+    # JWT 요청 자체에 오류가 있는지 확인
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

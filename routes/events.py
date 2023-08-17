@@ -1,10 +1,11 @@
 # 이벤트 처리용 모델을 정의
 
-from fastapi import APIRouter, Body, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from models.events import Event, EventUpdate
 from typing import List
 from beanie import PydanticObjectId
 from database.connection import Database
+from auth.authenticate import authenticate
 
 event_router=APIRouter(
     tags=["Events"]
@@ -33,7 +34,7 @@ async def retrieve_event(id:PydanticObjectId) -> Event:
 
 # 이벤트 생성 라우트
 @event_router.post("/new")
-async def create_event(body:Event) -> dict:
+async def create_event(body:Event, user: str = Depends(authenticate)) -> dict:
     await event_database.save(body)
     return{
         "message":"Event created successfully."
@@ -41,7 +42,7 @@ async def create_event(body:Event) -> dict:
 
 # UPDATE 라우트
 @event_router.put("/{id}", response_model=Event)
-async def update_event(id: PydanticObjectId, body:EventUpdate) -> Event:
+async def update_event(id: PydanticObjectId, body:EventUpdate, user: str=Depends(authenticate)) -> Event:
     print("PUT 호출되었습니다.")
     updated_event=await event_database.update(id, body)
     if not updated_event:
@@ -55,7 +56,7 @@ async def update_event(id: PydanticObjectId, body:EventUpdate) -> Event:
 
 # 데이터베이스에 있는 단일 이벤트 삭제
 @event_router.delete("/{id}")
-async def delete_event(id:PydanticObjectId) -> dict:
+async def delete_event(id:PydanticObjectId, user:str=Depends(authenticate)) -> dict:
     event=await event_database.delete(id)
     if not event:
         raise HTTPException(
