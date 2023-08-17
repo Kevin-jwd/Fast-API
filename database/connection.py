@@ -14,6 +14,7 @@ from models.events import Event
 
 class Settings(BaseSettings):
     DATABASE_URL:Optional[str]=None
+    SECRET_KEY:Optional[str]=None            # 비밀키
 
     async def initialize_database(self):
         client=AsyncIOMotorClient(self.DATABASE_URL)
