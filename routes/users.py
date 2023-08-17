@@ -1,7 +1,10 @@
 # 사용자 처리용 모델을 정의
 
-from fastapi import APIRouter, HTTPException, status
-from models.users import User, UserSignIn
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from auth.jwt_handler import create_access_token
+
+from models.users import User, TokenResponse
 from database.connection import Database
 from auth.hash_password import HashPassword
 
@@ -33,9 +36,11 @@ async def sign_new_user(user:User)->dict:
     }
 
 # 로그인 라우트
-@user_router.post("/signin")
-async def sign_user_in(user:UserSignIn)->dict:
-    user_exist=await User.find_one(User.email == user.email)
+@user_router.post("/signin", response_model=TokenResponse)
+# OAuth2PasswordRequestForm 클래스를 sign_user_in() 함수에 주입하여 해당 함수가 OAuth2 사양을 엄격하게 따르도록 함.
+# 함수 내에서는 패스워드, 반환된 접속 토큰, 토큰 유형을 검증
+async def sign_user_in(user:OAuth2PasswordRequestForm = Depends())->dict:
+    user_exist=await User.find_one(User.email == user.username)
     if not user_exist:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -45,6 +50,12 @@ async def sign_user_in(user:UserSignIn)->dict:
     if user_exist.password == user.password:
         return {
             "message" : "User signed in successfully."
+        }
+    if hash_password.verify_hash(user.password, user_exist.password):
+        access_token=create_access_token(user_exist.email)
+        return{
+            "access_token":access_token,
+            "token_type":"Bearer"
         }
     # 로그인 성공
     raise HTTPException(
