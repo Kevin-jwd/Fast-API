@@ -81,4 +81,22 @@ async def test_get_events_count(default_client: httpx.AsyncClient) -> None:
     assert response.status_code == 200
     assert len(events) == 2
 
-    
+# 변경 라우트 테스트
+# mock_event 픽스처에서 추출한 ID를 사용해 데이터베이스에 저장된 해당 이벤트를 수정
+# 그 다음 요청 페이로드와 헤더를 정의하고 response 변수에 요청 결과를 저장
+@pytest.mark.asyncio
+async def test_update_event(default_client: httpx.AsyncClient, mock_event: Event, access_token: str) -> None:
+    test_payload={
+        "title" : "Updated FastAPI event"
+    }
+    headers={
+        "Content-Type" : "application/json",
+        "Authorization" : f"Bearer {access_token}"
+    }
+    url=f"/event/{str(mock_event.id)}"
+
+    response = await default_client.put(url, json=test_payload, headers=headers)
+
+    assert response.status_code == 200
+    assert response.json()["title"] == test_payload["title"]
+    # assert response.json()["title"] == "This test should fail"
