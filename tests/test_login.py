@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.asyncio
 async def test_sign_new_user(default_client: httpx.AsyncClient) -> None:
     payload={
-        "email" : "testuser@@packt.com",
+        "email" : "testuser@packt.com",
         "password" : "testpassword",
     }
 
@@ -15,7 +15,7 @@ async def test_sign_new_user(default_client: httpx.AsyncClient) -> None:
     }
     
     test_response={
-        "message" : "User created successfully."
+        "message" : "User successfully registered!"
     }
 
     # 요청에 대한 예상 응답 정의
