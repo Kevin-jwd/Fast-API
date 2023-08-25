@@ -17,6 +17,7 @@ app.include_router(event_router, prefix="/event")
 
 origins=["*"]
 
+# CORSMiddleware 클래스를 FastAPI에서 임포트한 다음 origins 배열을 등록하고 add_middleware()메서드를 사용해 미들웨어를 등록한다.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
