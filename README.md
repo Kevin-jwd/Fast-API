@@ -1,2 +1,2 @@
 # Fast-API
-FastAPI study
+This is simple planner application using fastAPI.
