@@ -1,0 +1,29 @@
+version: "3.0"
+
+services:
+  api:
+    # build 필드는 현재 디렉터리 (.)에 있는 도커파일을 기준으로 event-planner-api:latest 이미지를 빌드한다.
+    build: .
+    image: event-planner-api:latest
+    # ports에서는 8000번 포트를 노출해서 HTTP를 통해 API에 접근하도록 한다.
+    ports:
+      - "8000:8000"
+    # .env.prod 파일을 환경 파일로 설정.
+    env_file:
+      - .env.prod
+
+  database:
+    # 앞서 풀한 mongo 이미지를 사용
+    image: mongo:5.0.15
+    # 27017번 포트를 정의했으나 외부로 노출하진 않음. API 서비스만 이 포트에 접근한다.
+    ports: 
+      - "27017"
+    # 영구적 저장소를 서비스에 할당해서 데이터를 저장하는 데 사용
+    volumes:
+      - data:/data/db
+
+# data라는 볼륨을 할당하여 배포에 사용.
+volumes:
+  data:
+
+  
