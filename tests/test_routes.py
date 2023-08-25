@@ -100,3 +100,32 @@ async def test_update_event(default_client: httpx.AsyncClient, mock_event: Event
     assert response.status_code == 200
     assert response.json()["title"] == test_payload["title"]
     # assert response.json()["title"] == "This test should fail"
+
+# 삭제 라우트 테스트
+@pytest.mark.asyncio
+async def test_delete_event(default_client: httpx.AsyncClient, mock_event: Event, access_token: str) -> None:
+    test_response={
+        "message" : "Event deleted successfully."
+    }
+    headers={
+        "Content-Type" : "application/json",
+        "Authorization" : f"Bearer {access_token}"
+    }
+
+    url=f"/event/{mock_event.id}"
+
+    response = await default_client.delete(url, headers=headers)
+
+    assert response.status_code == 200
+    assert response.json() == test_response
+
+# 실제로 삭제되었는지 테스트
+@pytest.mark.asyncio
+async def test_get_event_again(default_client: httpx.AsyncClient, mock_event: Event) -> None:
+    url = f"/event/{str(mock_event.id)}"
+    response = await default_client.get(url)
+
+    # assert response.status_code == 200
+    assert response.status_code == 404
+    # assert response.json()["creator"] == mock_event.creator
+    # assert response.json()["id"] == str(mock_event.id)
